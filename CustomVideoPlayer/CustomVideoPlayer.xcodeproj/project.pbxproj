@@ -7,19 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D621259F263BFCA2001E80B1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D621259E263BFCA2001E80B1 /* MainViewController.swift */; };
+		D62125A4263C005C001E80B1 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62125A3263C005C001E80B1 /* UIViewController+Extensions.swift */; };
+		D62125B4263C1478001E80B1 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62125B3263C1478001E80B1 /* UIView+Extensions.swift */; };
+		D696F7DE263E7105002BA748 /* CMTime+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D696F7DD263E7105002BA748 /* CMTime+Extensions.swift */; };
 		D6A24204263B09C4006065C8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24203263B09C4006065C8 /* AppDelegate.swift */; };
 		D6A24206263B09C4006065C8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24205263B09C4006065C8 /* SceneDelegate.swift */; };
-		D6A24208263B09C4006065C8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24207263B09C4006065C8 /* ViewController.swift */; };
+		D6A24208263B09C4006065C8 /* VideoPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24207263B09C4006065C8 /* VideoPlayerController.swift */; };
 		D6A2420B263B09C4006065C8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6A24209263B09C4006065C8 /* Main.storyboard */; };
 		D6A2420D263B09C6006065C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6A2420C263B09C6006065C8 /* Assets.xcassets */; };
 		D6A24210263B09C6006065C8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6A2420E263B09C6006065C8 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D621259E263BFCA2001E80B1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		D62125A3263C005C001E80B1 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
+		D62125B3263C1478001E80B1 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		D696F7DD263E7105002BA748 /* CMTime+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMTime+Extensions.swift"; sourceTree = "<group>"; };
 		D6A24200263B09C4006065C8 /* CustomVideoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomVideoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6A24203263B09C4006065C8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6A24205263B09C4006065C8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		D6A24207263B09C4006065C8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D6A24207263B09C4006065C8 /* VideoPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerController.swift; sourceTree = "<group>"; };
 		D6A2420A263B09C4006065C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D6A2420C263B09C6006065C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6A2420F263B09C6006065C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -37,6 +45,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D62125B2263C146A001E80B1 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D62125B3263C1478001E80B1 /* UIView+Extensions.swift */,
+				D62125A3263C005C001E80B1 /* UIViewController+Extensions.swift */,
+				D696F7DD263E7105002BA748 /* CMTime+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		D6A241F7263B09C4006065C8 = {
 			isa = PBXGroup;
 			children = (
@@ -56,13 +74,15 @@
 		D6A24202263B09C4006065C8 /* CustomVideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				D62125B2263C146A001E80B1 /* Extensions */,
 				D6A24203263B09C4006065C8 /* AppDelegate.swift */,
 				D6A24205263B09C4006065C8 /* SceneDelegate.swift */,
-				D6A24207263B09C4006065C8 /* ViewController.swift */,
+				D6A24207263B09C4006065C8 /* VideoPlayerController.swift */,
 				D6A24209263B09C4006065C8 /* Main.storyboard */,
 				D6A2420C263B09C6006065C8 /* Assets.xcassets */,
 				D6A2420E263B09C6006065C8 /* LaunchScreen.storyboard */,
 				D6A24211263B09C6006065C8 /* Info.plist */,
+				D621259E263BFCA2001E80B1 /* MainViewController.swift */,
 			);
 			path = CustomVideoPlayer;
 			sourceTree = "<group>";
@@ -137,9 +157,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6A24208263B09C4006065C8 /* ViewController.swift in Sources */,
+				D62125B4263C1478001E80B1 /* UIView+Extensions.swift in Sources */,
+				D696F7DE263E7105002BA748 /* CMTime+Extensions.swift in Sources */,
+				D6A24208263B09C4006065C8 /* VideoPlayerController.swift in Sources */,
 				D6A24204263B09C4006065C8 /* AppDelegate.swift in Sources */,
+				D62125A4263C005C001E80B1 /* UIViewController+Extensions.swift in Sources */,
 				D6A24206263B09C4006065C8 /* SceneDelegate.swift in Sources */,
+				D621259F263BFCA2001E80B1 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +313,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2FVQE295NZ;
 				INFOPLIST_FILE = CustomVideoPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -308,6 +333,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2FVQE295NZ;
 				INFOPLIST_FILE = CustomVideoPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
