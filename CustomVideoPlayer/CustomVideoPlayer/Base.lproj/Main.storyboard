@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -71,11 +72,16 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lqT-A9-Xk8">
                                         <rect key="frame" x="64" y="11.5" width="22" height="22"/>
+                                        <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="22" id="Hqs-L8-KRv"/>
                                             <constraint firstAttribute="width" secondItem="lqT-A9-Xk8" secondAttribute="height" multiplier="1:1" id="xML-C1-ihB"/>
                                         </constraints>
                                         <state key="normal" image="ic-audio"/>
+                                        <connections>
+                                            <action selector="audioButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RTX-eO-XhD"/>
+                                            <outletCollection property="gestureRecognizers" destination="uO4-SM-aSz" appends="YES" id="T73-tU-a2J"/>
+                                        </connections>
                                     </button>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PId-eM-K0a">
                                         <rect key="frame" x="100" y="7.5" width="231.5" height="31"/>
@@ -91,7 +97,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="0.5" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="PlayBackColor"/>
                                 <constraints>
                                     <constraint firstItem="lqT-A9-Xk8" firstAttribute="leading" secondItem="jO4-A3-Al1" secondAttribute="trailing" constant="22" id="1Oe-1E-1Iv"/>
                                     <constraint firstItem="PId-eM-K0a" firstAttribute="centerY" secondItem="E8P-Gj-hUj" secondAttribute="centerY" id="Obs-mO-fQq"/>
@@ -138,6 +144,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="audioButton" destination="lqT-A9-Xk8" id="aaW-Ho-IU2"/>
                         <outlet property="closeButton" destination="C3E-1P-GMM" id="z5L-D6-oda"/>
                         <outlet property="playBackView" destination="E8P-Gj-hUj" id="jnB-3A-Kje"/>
                         <outlet property="playButton" destination="jO4-A3-Al1" id="UBa-74-UxS"/>
@@ -147,6 +154,12 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.29999999999999999" id="uO4-SM-aSz">
+                    <connections>
+                        <action selector="handleLongGesture:" destination="BYZ-38-t0r" id="dcA-qs-oDB"/>
+                        <outlet property="delegate" destination="lqT-A9-Xk8" id="Elw-Zc-YiQ"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="29" y="90"/>
         </scene>
@@ -155,6 +168,9 @@
         <image name="ic-audio" width="30" height="30"/>
         <image name="ic-close" width="30" height="30"/>
         <image name="ic-play" width="30" height="30"/>
+        <namedColor name="PlayBackColor">
+            <color red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

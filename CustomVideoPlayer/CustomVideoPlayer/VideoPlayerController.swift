@@ -7,12 +7,15 @@
 
 import UIKit
 import AVFoundation
+import MediaPlayer
 
 private struct Constant {
     static let urlString = "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
     static let playImage = UIImage(named: "ic-play")
     static let pauseImage = UIImage(named: "ic-pause")
     static let thumbImage = UIImage(named: "ic-track")
+    static let audioImage = UIImage(named: "ic-audio")
+    static let noAudioImage = UIImage(named: "ic-no-audio")
 }
 
 class VideoPlayerController: UIViewController {
@@ -24,14 +27,17 @@ class VideoPlayerController: UIViewController {
     @IBOutlet private var timeRemainingLabel: UILabel!
     @IBOutlet private var timeSlider: UISlider!
     @IBOutlet private var closeButton: UIButton!
+    @IBOutlet private var audioButton: UIButton!
     @IBOutlet private var playBackView: PlayBackContentView!
     
     // MARK: - Properties
     
     private var player: AVPlayer!
     private var playerLayer: AVPlayerLayer!
+    private var mpVolume: VerticalVolumeView!
     private var isPlaying = false
     private var isShowPlayBack = true
+    private var isMuted = false
     private var playerTimer: Timer?
     
     // MARK: - Override Methods
@@ -55,6 +61,13 @@ class VideoPlayerController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         playerLayer.frame = videoView.bounds
+        let widthSlider: CGFloat = 25
+        let heightSlider: CGFloat = 100
+        
+        mpVolume.frame = CGRect(x: audioButton.frame.origin.x + (widthSlider / 2),
+                                y: playBackView.frame.origin.y - heightSlider,
+                                width: widthSlider,
+                                height: heightSlider)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -63,6 +76,8 @@ class VideoPlayerController: UIViewController {
                 isPlaying = true
                 playButton.setImage(Constant.pauseImage, for: .normal)
             }
+        } else if keyPath == "outputVolume" {
+            resetTimer()
         }
     }
     
@@ -79,10 +94,16 @@ class VideoPlayerController: UIViewController {
         try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
         try? AVAudioSession.sharedInstance().setActive(true)
         
+        // Detect volume output
+        AVAudioSession.sharedInstance().addObserver(self, forKeyPath: "outputVolume", options: .new, context: nil)
+        
         setupPlayer()
         
         // Timer
         startTimer()
+        
+        // MPVolume
+        setupMPVolume()
     }
     
     private func setupPlayer() {
@@ -96,6 +117,12 @@ class VideoPlayerController: UIViewController {
         videoView.layer.addSublayer(playerLayer)
         
         player.play()
+    }
+    
+    private func setupMPVolume() {
+        mpVolume = VerticalVolumeView()
+        mpVolume.alpha = 0
+        view.addSubview(mpVolume)
     }
     
     private func startTimer() {
@@ -112,6 +139,7 @@ class VideoPlayerController: UIViewController {
             guard let self = self else { return }
             self.closeButton.alpha = self.isShowPlayBack ? 0 : 1
             self.playBackView.alpha = self.isShowPlayBack ? 0 : 1
+            self.mpVolume.alpha = 0
             self.isShowPlayBack = !self.isShowPlayBack
         })
         if isShowPlayBack {
@@ -121,9 +149,11 @@ class VideoPlayerController: UIViewController {
     
     @objc private func controlViewHandleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         let location = gestureRecognizer.location(in: view)
-        guard let contentView = view.getViewsByType(type: PlayBackContentView.self).first else { return }
+        guard let contentView = view.getViewsByType(type: PlayBackContentView.self).first,
+              let volumeSliderView = view.getViewsByType(type: VerticalVolumeView.self).first else { return }
         
-        if contentView.frame.contains(location) && isShowPlayBack {
+        if (contentView.frame.contains(location) || volumeSliderView.frame.contains(location))
+            && isShowPlayBack {
             return
         }
         
@@ -138,13 +168,13 @@ class VideoPlayerController: UIViewController {
     
     // MARK: - IBAction
     
-    @IBAction func closeButtonTapped(_ sender: Any) {
+    @IBAction private func closeButtonTapped(_ sender: Any) {
         dismiss(animated: true)
         NotificationCenter.default.removeObserver(self)
         playerTimer?.invalidate()
     }
     
-    @IBAction func playButtonTapped(_ sender: UIButton) {
+    @IBAction private func playButtonTapped(_ sender: UIButton) {
         if isPlaying {
             player.pause()
             playButton.setImage(Constant.playImage, for: .normal)
@@ -156,7 +186,7 @@ class VideoPlayerController: UIViewController {
         resetTimer()
     }
     
-    @IBAction func timeSliderValueChanged(_ sender: UISlider) {
+    @IBAction private func timeSliderValueChanged(_ sender: UISlider) {
         if let duration = player.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
@@ -170,6 +200,21 @@ class VideoPlayerController: UIViewController {
             timeRemainingLabel.text = timeRemainingString
             
             resetTimer()
+        }
+    }
+    
+    @IBAction private func audioButtonTapped(_ sender: Any) {
+        isMuted = !isMuted
+        player.isMuted = isMuted
+        audioButton.setImage(isMuted ? Constant.noAudioImage : Constant.audioImage,
+                             for: .normal)
+        mpVolume.alpha = isMuted ? 0 : 1
+        resetTimer()
+    }
+    
+    @IBAction private func handleLongGesture(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == .began && !isMuted {
+            mpVolume.alpha = 1
         }
     }
 }
