@@ -57,13 +57,12 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E8P-Gj-hUj" customClass="PlayBackContentView" customModule="CustomVideoPlayer" customModuleProvider="target">
-                                <rect key="frame" x="16" y="805" width="382" height="45"/>
+                                <rect key="frame" x="16" y="792" width="382" height="54"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jO4-A3-Al1">
-                                        <rect key="frame" x="20" y="11.5" width="22" height="22"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="60" height="54"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="jO4-A3-Al1" secondAttribute="height" multiplier="1:1" id="CfF-Xh-YJc"/>
-                                            <constraint firstAttribute="height" constant="22" id="Q4A-t9-zk2"/>
+                                            <constraint firstAttribute="width" constant="60" id="ZDk-lW-R5n"/>
                                         </constraints>
                                         <state key="normal" image="ic-play"/>
                                         <connections>
@@ -71,12 +70,8 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lqT-A9-Xk8">
-                                        <rect key="frame" x="64" y="11.5" width="22" height="22"/>
+                                        <rect key="frame" x="60" y="0.0" width="60" height="54"/>
                                         <gestureRecognizers/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="22" id="Hqs-L8-KRv"/>
-                                            <constraint firstAttribute="width" secondItem="lqT-A9-Xk8" secondAttribute="height" multiplier="1:1" id="xML-C1-ihB"/>
-                                        </constraints>
                                         <state key="normal" image="ic-audio"/>
                                         <connections>
                                             <action selector="audioButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RTX-eO-XhD"/>
@@ -84,14 +79,11 @@
                                         </connections>
                                     </button>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PId-eM-K0a">
-                                        <rect key="frame" x="100" y="7.5" width="231.5" height="31"/>
+                                        <rect key="frame" x="122" y="12" width="209.5" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <connections>
-                                            <action selector="timeSliderValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="ELs-1E-LrU"/>
-                                        </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhj-U5-hxt">
-                                        <rect key="frame" x="337.5" y="14.5" width="28.5" height="16"/>
+                                        <rect key="frame" x="337.5" y="19" width="28.5" height="16"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -99,16 +91,19 @@
                                 </subviews>
                                 <color key="backgroundColor" name="PlayBackColor"/>
                                 <constraints>
-                                    <constraint firstItem="lqT-A9-Xk8" firstAttribute="leading" secondItem="jO4-A3-Al1" secondAttribute="trailing" constant="22" id="1Oe-1E-1Iv"/>
+                                    <constraint firstItem="lqT-A9-Xk8" firstAttribute="leading" secondItem="jO4-A3-Al1" secondAttribute="trailing" id="1Oe-1E-1Iv"/>
+                                    <constraint firstItem="jO4-A3-Al1" firstAttribute="height" secondItem="E8P-Gj-hUj" secondAttribute="height" id="Bf1-Qf-E57"/>
+                                    <constraint firstItem="lqT-A9-Xk8" firstAttribute="height" secondItem="jO4-A3-Al1" secondAttribute="height" id="GXS-ro-Y3i"/>
                                     <constraint firstItem="PId-eM-K0a" firstAttribute="centerY" secondItem="E8P-Gj-hUj" secondAttribute="centerY" id="Obs-mO-fQq"/>
-                                    <constraint firstItem="PId-eM-K0a" firstAttribute="leading" secondItem="lqT-A9-Xk8" secondAttribute="trailing" constant="16" id="VqQ-g4-eHm"/>
+                                    <constraint firstItem="PId-eM-K0a" firstAttribute="leading" secondItem="lqT-A9-Xk8" secondAttribute="trailing" constant="4" id="VqQ-g4-eHm"/>
                                     <constraint firstItem="dhj-U5-hxt" firstAttribute="leading" secondItem="PId-eM-K0a" secondAttribute="trailing" constant="8" id="Xz6-ed-dLQ"/>
-                                    <constraint firstItem="jO4-A3-Al1" firstAttribute="leading" secondItem="E8P-Gj-hUj" secondAttribute="leading" constant="20" id="Z8Y-rs-mRc"/>
+                                    <constraint firstItem="jO4-A3-Al1" firstAttribute="leading" secondItem="E8P-Gj-hUj" secondAttribute="leading" id="Z8Y-rs-mRc"/>
                                     <constraint firstAttribute="trailing" secondItem="dhj-U5-hxt" secondAttribute="trailing" constant="16" id="cx3-JT-zb4"/>
                                     <constraint firstItem="jO4-A3-Al1" firstAttribute="centerY" secondItem="E8P-Gj-hUj" secondAttribute="centerY" id="en7-kr-JVY"/>
                                     <constraint firstItem="dhj-U5-hxt" firstAttribute="centerY" secondItem="E8P-Gj-hUj" secondAttribute="centerY" id="gy1-3i-t0w"/>
                                     <constraint firstItem="lqT-A9-Xk8" firstAttribute="centerY" secondItem="E8P-Gj-hUj" secondAttribute="centerY" id="qaL-aE-UHD"/>
-                                    <constraint firstAttribute="height" constant="45" id="xbB-S7-682"/>
+                                    <constraint firstItem="lqT-A9-Xk8" firstAttribute="width" secondItem="jO4-A3-Al1" secondAttribute="width" id="t5f-n7-3r0"/>
+                                    <constraint firstAttribute="height" constant="54" id="xbB-S7-682"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -134,7 +129,7 @@
                             <constraint firstAttribute="trailing" secondItem="ibe-79-6LU" secondAttribute="trailing" id="9ta-9D-4tm"/>
                             <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ibe-79-6LU" secondAttribute="bottom" id="E4G-aM-uiF"/>
                             <constraint firstItem="ibe-79-6LU" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="SDW-Md-DBP"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="E8P-Gj-hUj" secondAttribute="bottom" constant="12" id="Trc-dn-lV9"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="E8P-Gj-hUj" secondAttribute="bottom" constant="16" id="Trc-dn-lV9"/>
                             <constraint firstItem="C3E-1P-GMM" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="Vni-fM-npG"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="E8P-Gj-hUj" secondAttribute="trailing" constant="16" id="e6I-u6-FiL"/>
                             <constraint firstItem="ibe-79-6LU" firstAttribute="top" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="top" id="gDe-8i-qAU"/>

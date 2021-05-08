@@ -64,7 +64,7 @@ class VideoPlayerController: UIViewController {
         let widthSlider: CGFloat = 25
         let heightSlider: CGFloat = 100
         
-        mpVolume.frame = CGRect(x: audioButton.frame.origin.x + (widthSlider / 2),
+        mpVolume.frame = CGRect(x: audioButton.frame.origin.x + (audioButton.frame.size.width / 2),
                                 y: playBackView.frame.origin.y - heightSlider,
                                 width: widthSlider,
                                 height: heightSlider)
@@ -85,6 +85,7 @@ class VideoPlayerController: UIViewController {
     
     private func config() {
         timeSlider.setThumbImage(Constant.thumbImage, for: .normal)
+        timeSlider.addTarget(self, action: #selector(timeSliderValueChanged(_:event:)), for: .valueChanged)
         
         // Tap gesture
         let controlTapGesture = UITapGestureRecognizer(target: self, action: #selector(controlViewHandleTap))
@@ -166,6 +167,34 @@ class VideoPlayerController: UIViewController {
         }
     }
     
+    @objc private func timeSliderValueChanged(_ sender: UISlider, event: UIEvent) {
+        if let duration: CMTime = player?.currentItem?.asset.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
+            let value = Float64(sender.value) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            let timeRemaining = duration - seekTime
+            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
+            timeRemainingLabel.text = timeRemainingString
+            if let touchEvent = event.allTouches?.first {
+                switch (touchEvent.phase) {
+                case .began:
+                    player.pause()
+                    break
+                case .moved:
+                    player.seek(to: seekTime)
+                    break
+                case .ended:
+                    player.play()
+                    break
+                default:
+                    break
+                }
+            }
+        }
+        resetTimer()
+    }
+    
     // MARK: - IBAction
     
     @IBAction private func closeButtonTapped(_ sender: Any) {
@@ -184,23 +213,6 @@ class VideoPlayerController: UIViewController {
         }
         isPlaying = !isPlaying
         resetTimer()
-    }
-    
-    @IBAction private func timeSliderValueChanged(_ sender: UISlider) {
-        if let duration = player.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
-            let value = Float64(sender.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            
-            player.seek(to: seekTime)
-            
-            let timeRemaining = duration - seekTime
-            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
-            timeRemainingLabel.text = timeRemainingString
-            
-            resetTimer()
-        }
     }
     
     @IBAction private func audioButtonTapped(_ sender: Any) {
