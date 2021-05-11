@@ -81,6 +81,12 @@ class VideoPlayerController: UIViewController {
         }
     }
     
+    // MARK: - Deinit
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        AVAudioSession.sharedInstance().removeObserver(self, forKeyPath: "outputVolume")
+    }
+    
     // MARK: - Private Methods
     
     private func config() {
@@ -199,7 +205,6 @@ class VideoPlayerController: UIViewController {
     
     @IBAction private func closeButtonTapped(_ sender: Any) {
         dismiss(animated: true)
-        NotificationCenter.default.removeObserver(self)
         playerTimer?.invalidate()
     }
     
