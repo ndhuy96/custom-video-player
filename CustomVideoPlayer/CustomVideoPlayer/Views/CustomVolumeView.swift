@@ -1,5 +1,5 @@
 //
-//  VerticalVolumeView.swift
+//  CustomVolumeView.swift
 //  CustomVideoPlayer
 //
 //  Created by Huy Nguyen on 5/3/21.
@@ -9,12 +9,13 @@ import MediaPlayer
 
 private struct Constant {
     static let thumbVolumeImage = UIImage(named: "ic-track-volume")
-    static let playBackColor = UIColor(named: "PlayBackColor")
+    static let minTrackColor = UIColor(named: "MinTrackColor")
+    static let maxTrackColor = UIColor(named: "MaxTrackColor")
 }
 
-final class VerticalVolumeView: MPVolumeView {
+final class CustomVolumeView: MPVolumeView {
     
-    let padding: CGFloat = 6
+    let padding: CGFloat = 12.0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,24 +28,22 @@ final class VerticalVolumeView: MPVolumeView {
     }
     
     override func volumeSliderRect(forBounds bounds: CGRect) -> CGRect {
-        return CGRect(x: bounds.origin.x + padding,
+        return CGRect(x: bounds.origin.x,
                       y: bounds.origin.y,
-                      width: bounds.width - padding * 2,
+                      width: bounds.width - padding,
                       height: bounds.height)
     }
     
     private func setupView() {
         self.showsRouteButton = false
-        self.backgroundColor = Constant.playBackColor
+        self.backgroundColor = .clear
         self.setVolumeThumbImage(Constant.thumbVolumeImage, for: .normal)
-        self.transform = CGAffineTransform(rotationAngle: -CGFloat.pi / 2)
+        setupSlider()
     }
     
-    func setVolume(_ value: Float) {
-        let slider = self.subviews.first(where: { $0 is UISlider }) as? UISlider
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-            slider?.value = value
-        }
+    private func setupSlider() {
+        guard let slider = self.subviews.first(where: { $0 is UISlider }) as? UISlider else { return }
+        slider.minimumTrackTintColor = Constant.minTrackColor
+        slider.maximumTrackTintColor = Constant.maxTrackColor
     }
 }

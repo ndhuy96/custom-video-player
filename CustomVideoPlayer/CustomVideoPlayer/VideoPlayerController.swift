@@ -11,11 +11,6 @@ import MediaPlayer
 
 private struct Constant {
     static let urlString = "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
-    static let playImage = UIImage(named: "ic-play")
-    static let pauseImage = UIImage(named: "ic-pause")
-    static let thumbImage = UIImage(named: "ic-track")
-    static let audioImage = UIImage(named: "ic-audio")
-    static let noAudioImage = UIImage(named: "ic-no-audio")
 }
 
 class VideoPlayerController: UIViewController {
@@ -23,21 +18,14 @@ class VideoPlayerController: UIViewController {
     // MARK: - IBOutlet
     
     @IBOutlet private var videoView: UIView!
-    @IBOutlet private var playButton: UIButton!
-    @IBOutlet private var timeRemainingLabel: UILabel!
-    @IBOutlet private var timeSlider: UISlider!
     @IBOutlet private var closeButton: UIButton!
-    @IBOutlet private var audioButton: UIButton!
-    @IBOutlet private var playBackView: PlayBackContentView!
+    @IBOutlet private var playBackView: PlayBackView!
     
     // MARK: - Properties
     
     private var player: AVPlayer!
     private var playerLayer: AVPlayerLayer!
-    private var mpVolume: VerticalVolumeView!
-    private var isPlaying = false
     private var isShowPlayBack = true
-    private var isMuted = false
     private var playerTimer: Timer?
     
     // MARK: - Override Methods
@@ -45,8 +33,6 @@ class VideoPlayerController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         config()
-        addNotificationObserver()
-        addTimeObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -61,212 +47,85 @@ class VideoPlayerController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         playerLayer.frame = videoView.bounds
-        let widthSlider: CGFloat = 25
-        let heightSlider: CGFloat = 100
-        
-        mpVolume.frame = CGRect(x: audioButton.frame.origin.x + (audioButton.frame.size.width / 2),
-                                y: playBackView.frame.origin.y - heightSlider,
-                                width: widthSlider,
-                                height: heightSlider)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "status" {
-            if player.status == .readyToPlay {
-                isPlaying = true
-                playButton.setImage(Constant.pauseImage, for: .normal)
-            }
-        } else if keyPath == "outputVolume" {
-            resetTimer()
-        }
-    }
-    
-    // MARK: - Deinit
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-        AVAudioSession.sharedInstance().removeObserver(self, forKeyPath: "outputVolume")
     }
     
     // MARK: - Private Methods
     
     private func config() {
-        timeSlider.setThumbImage(Constant.thumbImage, for: .normal)
-        timeSlider.addTarget(self, action: #selector(timeSliderValueChanged(_:event:)), for: .valueChanged)
-        
         // Tap gesture
-        let controlTapGesture = UITapGestureRecognizer(target: self, action: #selector(controlViewHandleTap))
+        let controlTapGesture = UITapGestureRecognizer(target: self, action: #selector(playerViewHandleTap))
         view.addGestureRecognizer(controlTapGesture)
-        
-        // Avoid affect of Mute Control of the device on AVPlayer
-        try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-        try? AVAudioSession.sharedInstance().setActive(true)
-        
-        // Detect volume output
-        AVAudioSession.sharedInstance().addObserver(self, forKeyPath: "outputVolume", options: .new, context: nil)
         
         setupPlayer()
         
-        // Timer
-        startTimer()
+        playBackView.delegate = self
+        playBackView.config(with: player)
+        playBackView.playVideo()
         
-        // MPVolume
-        setupMPVolume()
+        startTimer()
     }
     
     private func setupPlayer() {
         guard let url = URL(string: Constant.urlString) else { return }
         player = AVPlayer(url: url)
-        player.addObserver(self, forKeyPath: "status", options: .new, context: nil)
-        
         playerLayer = AVPlayerLayer(player: player)
         playerLayer.videoGravity = .resizeAspect
-        
         videoView.layer.addSublayer(playerLayer)
-        
-        player.play()
     }
-    
-    private func setupMPVolume() {
-        mpVolume = VerticalVolumeView()
-        mpVolume.alpha = 0
-        view.addSubview(mpVolume)
-    }
-    
-    private func startTimer() {
-        playerTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(autoHidePlayBack), userInfo: nil, repeats: false)
-    }
-    
-    private func resetTimer() {
-        playerTimer?.invalidate()
-        startTimer()
-    }
-    
-    private func showHideControlView() {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self = self else { return }
-            self.closeButton.alpha = self.isShowPlayBack ? 0 : 1
-            self.playBackView.alpha = self.isShowPlayBack ? 0 : 1
-            self.mpVolume.alpha = 0
-            self.isShowPlayBack = !self.isShowPlayBack
-        })
-        if isShowPlayBack {
-            resetTimer()
-        }
-    }
-    
-    @objc private func controlViewHandleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        let location = gestureRecognizer.location(in: view)
-        guard let contentView = view.getViewsByType(type: PlayBackContentView.self).first,
-              let volumeSliderView = view.getViewsByType(type: VerticalVolumeView.self).first else { return }
-        
-        if (contentView.frame.contains(location) || volumeSliderView.frame.contains(location))
-            && isShowPlayBack {
-            return
-        }
-        
-        showHideControlView()
-    }
-    
-    @objc private func autoHidePlayBack() {
-        if isShowPlayBack {
-            showHideControlView()
-        }
-    }
-    
-    @objc private func timeSliderValueChanged(_ sender: UISlider, event: UIEvent) {
-        if let duration: CMTime = player?.currentItem?.asset.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
-            let value = Float64(sender.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            let timeRemaining = duration - seekTime
-            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
-            timeRemainingLabel.text = timeRemainingString
-            if let touchEvent = event.allTouches?.first {
-                switch (touchEvent.phase) {
-                case .began:
-                    player.pause()
-                    break
-                case .moved:
-                    player.seek(to: seekTime)
-                    break
-                case .ended:
-                    player.play()
-                    break
-                default:
-                    break
-                }
-            }
-        }
-        resetTimer()
-    }
-    
-    // MARK: - IBAction
-    
+            
     @IBAction private func closeButtonTapped(_ sender: Any) {
         dismiss(animated: true)
         playerTimer?.invalidate()
     }
     
-    @IBAction private func playButtonTapped(_ sender: UIButton) {
-        if isPlaying {
-            player.pause()
-            playButton.setImage(Constant.playImage, for: .normal)
-        } else {
-            player.play()
-            playButton.setImage(Constant.pauseImage, for: .normal)
+    @objc private func playerViewHandleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        let location = gestureRecognizer.location(in: view)
+        guard let contentView = view.getViewsByType(type: PlayBackView.self).first else { return }
+        
+        if contentView.frame.contains(location) && isShowPlayBack {
+            return
         }
-        isPlaying = !isPlaying
-        resetTimer()
-    }
-    
-    @IBAction private func audioButtonTapped(_ sender: Any) {
-        isMuted = !isMuted
-        player.isMuted = isMuted
-        audioButton.setImage(isMuted ? Constant.noAudioImage : Constant.audioImage,
-                             for: .normal)
-        mpVolume.alpha = isMuted ? 0 : 1
-        resetTimer()
-    }
-    
-    @IBAction private func handleLongGesture(_ sender: UILongPressGestureRecognizer) {
-        if sender.state == .began && !isMuted {
-            mpVolume.alpha = 1
-        }
+        
+        showHidePlayBackView()
     }
 }
 
-// MARK: - Time Observer
+// MARK: - Show / Hide PlayBack
 
 private extension VideoPlayerController {
-    // Track player progress
-    private func addTimeObserver() {
-        let interval = CMTime(value: 1, timescale: 2)
-        player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { [weak self] progressTime in
-            guard let currentItem = self?.player.currentItem else { return }
-            self?.timeSlider.value = Float(progressTime.seconds / currentItem.duration.seconds)
-            
-            let timeRemaining = currentItem.duration - progressTime
-            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
-            self?.timeRemainingLabel.text = timeRemainingString
+    func startTimer() {
+        playerTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(autoHidePlayBack), userInfo: nil, repeats: false)
+    }
+    
+    func resetTimer() {
+        playerTimer?.invalidate()
+        startTimer()
+    }
+    
+    @objc func autoHidePlayBack() {
+        if isShowPlayBack {
+            showHidePlayBackView()
+        }
+    }
+    
+    func showHidePlayBackView() {
+        isShowPlayBack = !isShowPlayBack
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            guard let self = self else { return }
+            self.closeButton.alpha = !self.isShowPlayBack ? 0 : 1
+            self.playBackView.alpha = !self.isShowPlayBack ? 0 : 1
         })
+        if isShowPlayBack {
+            resetTimer()
+        }
     }
 }
 
-// MARK: - Notification Observer
+// MARK: - PlayBack delegate
 
-private extension VideoPlayerController {
-    func addNotificationObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didEnterBackground(_:)),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-    }
-    
-    @objc func didEnterBackground(_ notification: Notification) {
-        player.pause()
+extension VideoPlayerController: PlayBackDelegate {
+    func delayAutoHidePlayBack() {
+        resetTimer()
     }
 }
 

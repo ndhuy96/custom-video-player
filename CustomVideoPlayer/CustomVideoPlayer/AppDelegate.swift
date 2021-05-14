@@ -5,16 +5,21 @@
 //  Created by Huy Nguyen on 4/29/21.
 //
 
+import AVFoundation
 import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        config()
         return true
+    }
+    
+    private func config() {
+        // Avoid affect of Mute Control of the device on AVPlayer
+        try? AVAudioSession.sharedInstance().setCategory(.playback)
+        try? AVAudioSession.sharedInstance().setActive(true)
     }
 
     // MARK: UISceneSession Lifecycle
