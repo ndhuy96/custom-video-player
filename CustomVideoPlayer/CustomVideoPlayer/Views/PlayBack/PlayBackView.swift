@@ -14,6 +14,7 @@ protocol PlayBackDelegate: AnyObject {
 
 private struct Constant {
     static let icTrack = UIImage(named: "ic-track")
+    static let icTrackVolume = UIImage(named: "ic-track-volume")
     static let icPlay = UIImage(named: "ic-play")
     static let icPause = UIImage(named: "ic-pause")
     static let icReplay = UIImage(named: "ic-replay")
@@ -81,7 +82,7 @@ final class PlayBackView: UIView {
     // MARK: - Private Methods
     
     private func setup() {
-        timeSlider.setThumbImage(Constant.icTrack, for: .normal)
+        timeSlider.setThumbImage(Constant.icTrackVolume, for: .normal)
         timeSlider.addTarget(self, action: #selector(timeSliderValueChanged(_:event:)), for: .valueChanged)
     }
     
@@ -134,7 +135,7 @@ final class PlayBackView: UIView {
     }
     
     private func showHideVolumeSlider() {
-        mpVolume.showsVolumeSlider = !isMuted
+        mpVolume.isHidden = isMuted
         mpVolumeWidthConstraint.constant = isMuted ? Constant.minWidthVolumeSlider : Constant.maxWidthVolumeSlider
         UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
