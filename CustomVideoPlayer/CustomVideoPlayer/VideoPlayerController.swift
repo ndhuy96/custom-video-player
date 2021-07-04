@@ -13,7 +13,7 @@ private struct Constant {
     static let urlString = "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
 }
 
-class VideoPlayerController: UIViewController {
+final class VideoPlayerController: UIViewController {
     
     // MARK: - IBOutlet
     
@@ -128,5 +128,3 @@ extension VideoPlayerController: PlayBackDelegate {
         resetTimer()
     }
 }
-
-final class PlayBackContentView: UIView {}

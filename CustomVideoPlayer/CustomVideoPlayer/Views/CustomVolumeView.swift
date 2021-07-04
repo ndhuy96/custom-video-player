@@ -8,7 +8,7 @@
 import MediaPlayer
 
 private struct Constant {
-    static let thumbVolumeImage = UIImage(named: "ic-track-volume")
+    static let icTrack = UIImage(named: "ic-track")
     static let minTrackColor = UIColor(named: "MinTrackColor")
     static let maxTrackColor = UIColor(named: "MaxTrackColor")
 }
@@ -37,7 +37,7 @@ final class CustomVolumeView: MPVolumeView {
     private func setupView() {
         self.showsRouteButton = false
         self.backgroundColor = .clear
-        self.setVolumeThumbImage(Constant.thumbVolumeImage, for: .normal)
+        self.setVolumeThumbImage(Constant.icTrack, for: .normal)
         setupSlider()
     }
     
