@@ -37,9 +37,8 @@ final class PlayBackView: UIView {
     
     weak var delegate: PlayBackDelegate?
     private var player: AVPlayer?
-    private var isPlaying: Bool = false
     private var isMuted: Bool = false
-    private var isFinished: Bool = false
+    private var isVideoFinished: Bool = false
     
     private var statusObserver: NSKeyValueObservation?
     
@@ -63,7 +62,7 @@ final class PlayBackView: UIView {
         }
     }
     
-    // MARK: Deinit
+    // MARK: - Deinit
     
     deinit {
         statusObserver?.invalidate()
@@ -86,42 +85,47 @@ final class PlayBackView: UIView {
     }
     
     @objc private func timeSliderValueChanged(_ sender: UISlider, event: UIEvent) {
-        if let duration: CMTime = player?.currentItem?.asset.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
-            let value = Float64(sender.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            let timeRemaining = duration - seekTime
-            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
-            timeRemainingLabel.text = timeRemainingString
-            if let touchEvent = event.allTouches?.first {
-                switch touchEvent.phase {
-                case .began:
-                    pauseVideo()
-                case .moved:
-                    player?.seek(to: seekTime)
-                case .ended:
-                    playVideo()
-                default:
-                    break
-                }
+        guard let duration = player?.currentItem?.duration else { return }
+        let totalSeconds = CMTimeGetSeconds(duration)
+        guard !(totalSeconds.isNaN || totalSeconds.isInfinite) else { return }
+        let value = Float64(sender.value) * totalSeconds
+        let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
+        
+        // Seek and scrub video
+        if let touchEvent = event.allTouches?.first {
+            switch touchEvent.phase {
+            case .began:
+                pauseVideo()
+            case .moved:
+                player?.seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
+            case .ended:
+                playVideo()
+                isVideoFinished = false
+            default:
+                break
             }
-            
-            delegate?.delayAutoHidePlayBack()
         }
+        
+        // Update time remaining label
+        let timeRemaining = duration - seekTime
+        guard let timeRemainingString = timeRemaining.getTimeString() else { return }
+        timeRemainingLabel.text = timeRemainingString
+        
+        // Delay auto hide playback
+        delegate?.delayAutoHidePlayBack()
     }
     
     @IBAction private func playPauseButtonTapped(_ sender: Any) {
-        if isPlaying {
+        guard let player = player else { return }
+        if player.isPlaying {
             pauseVideo()
         } else {
-            if isFinished {
+            if isVideoFinished {
                 replayVideo()
             } else {
                 playVideo()
             }
         }
-        isPlaying = !isPlaying
         delegate?.delayAutoHidePlayBack()
     }
     
@@ -134,7 +138,7 @@ final class PlayBackView: UIView {
     }
     
     private func showHideVolumeSlider() {
-        mpVolume.showsVolumeSlider = !isMuted
+        mpVolume.isHidden = isMuted
         mpVolumeWidthConstraint.constant = isMuted ? Constant.minWidthVolumeSlider : Constant.maxWidthVolumeSlider
         UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
@@ -156,9 +160,10 @@ extension PlayBackView {
     }
     
     func replayVideo() {
-        isFinished = false
-        player?.seek(to: CMTime.zero)
-        player?.play()
+        isVideoFinished = false
+        player?.seek(to: CMTime.zero, completionHandler: { [weak self] isFinished in
+            self?.player?.play()
+        })
         playPauseButton.setImage(Constant.icPause, for: .normal)
     }
 }
@@ -168,13 +173,7 @@ extension PlayBackView {
 private extension PlayBackView {
     func addObservers() {
         // Observer player's status
-        statusObserver = player?.observe(\.status, options: .new) { [weak self] currentPlayer, _ in
-            guard let self = self else { return }
-            if currentPlayer.status == .readyToPlay {
-                self.isPlaying = true
-                self.playPauseButton.setImage(Constant.icPause, for: .normal)
-            }
-        }
+        addPlayerStatusObserver()
         
         // Detect volume output
         AVAudioSession.sharedInstance().addObserver(self, forKeyPath: "outputVolume", options: .new, context: nil)
@@ -183,17 +182,31 @@ private extension PlayBackView {
         addNotificationObserver()
     }
     
+    func addPlayerStatusObserver() {
+        statusObserver = player?.observe(\.status, options: .new) { [weak self] currentPlayer, _ in
+            guard let self = self else { return }
+            if currentPlayer.status == .readyToPlay {
+                self.playPauseButton.setImage(Constant.icPause, for: .normal)
+            }
+        }
+    }
+    
     func addTimeObserver() {
         let interval = CMTime(value: 1, timescale: 2)
-        player?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { [weak self] progressTime in
-            guard let self = self,
-                  let currentItem = self.player?.currentItem else { return }
-            self.timeSlider.value = Float(progressTime.seconds / currentItem.duration.seconds)
-            
-            let timeRemaining = currentItem.duration - progressTime
-            guard let timeRemainingString = timeRemaining.getTimeString() else { return }
-            self.timeRemainingLabel.text = timeRemainingString
+        player?.addPeriodicTimeObserver(forInterval: interval, queue: .main, using: { [weak self] progressTime in
+            self?.updateVideoPlayerState(progressTime: progressTime)
         })
+    }
+    
+    func updateVideoPlayerState(progressTime: CMTime) {
+        // Update time slider's value
+        guard let duration = player?.currentItem?.duration else { return }
+        timeSlider.value = Float(progressTime.seconds / duration.seconds)
+
+        // Update time remaining label
+        let timeRemaining = duration - progressTime
+        guard let timeRemainingString = timeRemaining.getTimeString() else { return }
+        timeRemainingLabel.text = timeRemainingString
     }
     
     func addNotificationObserver() {
@@ -212,8 +225,7 @@ private extension PlayBackView {
     }
     
     @objc func playerDidFinishPlaying() {
-        isPlaying = false
-        isFinished = true
+        isVideoFinished = true
         playPauseButton.setImage(Constant.icReplay, for: .normal)
     }
 }
