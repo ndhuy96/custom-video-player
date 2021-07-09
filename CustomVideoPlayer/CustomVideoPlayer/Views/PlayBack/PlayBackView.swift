@@ -8,10 +8,6 @@
 import AVFoundation
 import UIKit
 
-protocol PlayBackDelegate: AnyObject {
-    func delayAutoHidePlayBack()
-}
-
 private struct Constant {
     static let icTrack = UIImage(named: "ic-track")
     static let icPlay = UIImage(named: "ic-play")
@@ -35,7 +31,7 @@ final class PlayBackView: UIView {
     
     // MARK: - Controls & Properties
     
-    weak var delegate: PlayBackDelegate?
+    var pauseAutoHidePlayBackClosure: (() -> Void)?
     private var player: AVPlayer?
     private var isMuted: Bool = false
     private var isVideoFinished: Bool = false
@@ -58,7 +54,7 @@ final class PlayBackView: UIView {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "outputVolume" {
-            delegate?.delayAutoHidePlayBack()
+            pauseAutoHidePlayBackClosure?()
         }
     }
     
@@ -112,7 +108,7 @@ final class PlayBackView: UIView {
         timeRemainingLabel.text = timeRemainingString
         
         // Delay auto hide playback
-        delegate?.delayAutoHidePlayBack()
+        pauseAutoHidePlayBackClosure?()
     }
     
     @IBAction private func playPauseButtonTapped(_ sender: Any) {
@@ -126,7 +122,7 @@ final class PlayBackView: UIView {
                 playVideo()
             }
         }
-        delegate?.delayAutoHidePlayBack()
+        pauseAutoHidePlayBackClosure?()
     }
     
     @IBAction private func audioButtonTapped(_ sender: Any) {
@@ -134,7 +130,7 @@ final class PlayBackView: UIView {
         player?.isMuted = isMuted
         audioButton.setImage(isMuted ? Constant.icNoAudio : Constant.icAudio, for: .normal)
         showHideVolumeSlider()
-        delegate?.delayAutoHidePlayBack()
+        pauseAutoHidePlayBackClosure?()
     }
     
     private func showHideVolumeSlider() {

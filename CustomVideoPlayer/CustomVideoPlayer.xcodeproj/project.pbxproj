@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8EB9DCA426975E8B00BD712F /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB9DCA326975E8B00BD712F /* VideoPlayer.swift */; };
+		8EB9DCA826975E9900BD712F /* VideoPlayer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EB9DCA726975E9900BD712F /* VideoPlayer.xib */; };
 		D621259F263BFCA2001E80B1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D621259E263BFCA2001E80B1 /* MainViewController.swift */; };
 		D62125A4263C005C001E80B1 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62125A3263C005C001E80B1 /* UIViewController+Extensions.swift */; };
 		D62125B4263C1478001E80B1 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62125B3263C1478001E80B1 /* UIView+Extensions.swift */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8EB9DCA326975E8B00BD712F /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		8EB9DCA726975E9900BD712F /* VideoPlayer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VideoPlayer.xib; sourceTree = "<group>"; };
 		D621259E263BFCA2001E80B1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D62125A3263C005C001E80B1 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		D62125B3263C1478001E80B1 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
@@ -53,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8EB9DCA226975E6C00BD712F /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				8EB9DCA326975E8B00BD712F /* VideoPlayer.swift */,
+				8EB9DCA726975E9900BD712F /* VideoPlayer.xib */,
+			);
+			path = VideoPlayer;
+			sourceTree = "<group>";
+		};
 		D62125B2263C146A001E80B1 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +122,7 @@
 		D6C9ECE5264EAFAB00A27D34 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8EB9DCA226975E6C00BD712F /* VideoPlayer */,
 				D6C9ECE4264EAF9600A27D34 /* PlayBack */,
 				D696F7E026402487002BA748 /* CustomVolumeView.swift */,
 			);
@@ -173,6 +187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6A24210263B09C6006065C8 /* LaunchScreen.storyboard in Resources */,
+				8EB9DCA826975E9900BD712F /* VideoPlayer.xib in Resources */,
 				D6A2420D263B09C6006065C8 /* Assets.xcassets in Resources */,
 				D6A2420B263B09C4006065C8 /* Main.storyboard in Resources */,
 				D6C9ECEB264EAFF700A27D34 /* PlayBackView.xib in Resources */,
@@ -195,6 +210,7 @@
 				D6A24206263B09C4006065C8 /* SceneDelegate.swift in Sources */,
 				D6C9ECE7264EAFCE00A27D34 /* PlayBackView.swift in Sources */,
 				D621259F263BFCA2001E80B1 /* MainViewController.swift in Sources */,
+				8EB9DCA426975E8B00BD712F /* VideoPlayer.swift in Sources */,
 				D690B5D02691E241007E81EE /* AVPlayer+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
